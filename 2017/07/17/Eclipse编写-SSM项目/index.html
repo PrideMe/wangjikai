@@ -256,19 +256,19 @@ eclipse版本（4.">
 <h2 id="MySQL版本（5-7-17）"><a href="#MySQL版本（5-7-17）" class="headerlink" title="MySQL版本（5.7.17）"></a>MySQL版本（5.7.17）</h2><blockquote>
 <p>Welcome to the MySQL monitor.  Commands end with ; or \g.<br>Your MySQL connection id is 1552<br>Server version: 5.7.17-log MySQL Community Server (GPL)</p>
 </blockquote>
-<img src="https://img-blog.csdn.net/20170717092916880?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxNDYxNTcwNw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" width="70%" alt="mysql版本"/>
+<img src="/medias/images/mysql.png" width="70%" alt="mysql版本"/>
 
 <hr>
 <h2 id="JDK版本（1-8-0-111）"><a href="#JDK版本（1-8-0-111）" class="headerlink" title="JDK版本（1.8.0_111）"></a>JDK版本（1.8.0_111）</h2><blockquote>
 <p>java version “1.8.0_111”<br>Java(TM) SE Runtime Environment (build 1.8.0_111-b14)<br>Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)</p>
 </blockquote>
-<img src="https://img-blog.csdn.net/20170717093512737?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxNDYxNTcwNw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="JDK版本"/>
+<img src="/medias/images/jdk.png" alt="JDK版本"/>
 
 <hr>
 <h2 id="Maven版本（3-5-0）"><a href="#Maven版本（3-5-0）" class="headerlink" title="Maven版本（3.5.0）"></a>Maven版本（3.5.0）</h2><blockquote>
 <p>Apache Maven 3.5.0 (ff8f5e7444045639af65f6095c62210b5713f426; 2017-04-04T03:39:06+08:00)<br>Maven home: D:\apache-maven-3.5.0\bin..<br>Java version: 1.8.0_111, vendor: Oracle Corporation<br>Java home: C:\Java\jdk1.8.0_111\jre<br>Default locale: zh_CN, platform encoding: GBK<br>OS name: “windows 10”, version: “10.0”, arch: “amd64”, family: “windows”</p>
 </blockquote>
-<img src="https://img-blog.csdn.net/20170717095220100?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxNDYxNTcwNw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" width="80%" alt="maven版本"/>
+<img src="/medias/images/maven.png" width="80%" alt="maven版本"/>
 
 <hr>
 <h2 id="用Maven创建项目注意事项"><a href="#用Maven创建项目注意事项" class="headerlink" title="用Maven创建项目注意事项"></a>用Maven创建项目注意事项</h2><p><strong>1、打开eclipse工程的Navigator视图，找到新建maven项目的.settings目录，修改如下：</strong></p>
@@ -287,7 +287,7 @@ eclipse版本（4.">
 </ul>
 <p>（大概就是新建maven项目所需要的流程）<br>修改完项目编译器版本，动态网站为最新的3.0版本，使用新特性，然后添加maven的四个默认文件<br>夹，在项目的java build path查看是否有默认的四个文件夹，缺少哪个就添加哪个。同时指定输出文件夹。<br>JRE版本一定要与JDK版本对应，不然会存在项目报错却找不到错误点的情况。<br>综上如此，项目基本不会报错了。</p>
 <hr>
-<p><strong>2、pom.xml添加jar包</strong><br>项目必须的jar包如下。<br><img src="https://img-blog.csdn.net/20170717101957090?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxNDYxNTcwNw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" width="40%" alt="pom文件"/></p>
+<p><strong>2、pom.xml添加jar包</strong><br>项目必须的jar包如下。<br><img src="/medias/images/pom.png" width="40%" alt="pom文件"/></p>
 <p><strong>pom.xml如下</strong></p>
 <pre class="line-numbers language-none"><code class="language-none">&lt;project xmlns&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;POM&#x2F;4.0.0&quot; xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;
 	xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;POM&#x2F;4.0.0 http:&#x2F;&#x2F;maven.apache.org&#x2F;maven-v4_0_0.xsd&quot;&gt;
@@ -706,7 +706,7 @@ public class User &#123;
 &#125;
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>对应的数据库模型：</p>
-<img src="https://img-blog.csdn.net/20170722223417356?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxNDYxNTcwNw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" width="50%" alt="数据库">
+<img src="/medias/images/data.png" width="50%" alt="数据库">
 
 <hr>
 <h3 id="2、dao数据访问层"><a href="#2、dao数据访问层" class="headerlink" title="2、dao数据访问层"></a>2、dao数据访问层</h3><pre class="line-numbers language-none"><code class="language-none">package com.dao;
