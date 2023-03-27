@@ -5,7 +5,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="Java-Serializable源码分析, 王吉凯">
-    <meta name="description" content="">
+    <meta name="description" content="
+Java序列化是指把Java对象转换为字节序列的过程；通过序列化可以把对象转换成字节流，可以进行网络传输，保持到本地文件，数据库等，增加对象的生命周期。serializeable是一个标记接口，没有待实现方法，此接口的意义在于告诉java">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -204,7 +205,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-03-27
+                    2018-06-02
                 </div>
                 
 
@@ -213,14 +214,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    0
+                    1.9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    9 分
                 </div>
                 
 
@@ -243,7 +244,173 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <blockquote>
+<p>Java序列化是指把Java对象转换为字节序列的过程；通过序列化可以把对象转换成字节流，可以进行网络传输，保持到本地文件，数据库等，增加对象的生命周期。<br>serializeable是一个标记接口，没有待实现方法，此接口的意义在于告诉java，开发者允许此类被序列化。   </p>
+</blockquote>
+<span id="more"></span>   
+
+<p><strong>问：JavaBean或PO对象是否一定要实现Serializable接口？意义在哪？</strong><br><strong>答：</strong> 实现<strong>Serializable</strong>是因为我们需要使用JDK内置的序列化。<br>以目前的技术来说是否实现<strong>Serializable</strong>接口已经不重要了，因为现在的序列化技术太多，都比<strong>JDK</strong>内置的要优秀，而且不需要实现<strong>Serializable</strong>接口。</p>
+<p>要实现默认的序列化只需要继承<strong>Serializable</strong>即可，如果想实现自己指定序列化的内容，则可以让一个类去实现Serializable的子接口<strong>Externalizable</strong>   </p>
+<blockquote>
+<p>父类实现了Serializable，子类不需要实现Serializable。即父类实现序列化，子类自动实现序列化，不需要显式实现Serializable接口</p>
+</blockquote>
+<h2 id="源码翻译"><a href="#源码翻译" class="headerlink" title="源码翻译"></a>源码翻译</h2><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">/*
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */</span>
+
+<span class="token keyword">package</span> <span class="token namespace">java<span class="token punctuation">.</span>io</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+ * Serializability of a class is enabled by the class implementing the
+ * java.io.Serializable interface. Classes that do not implement this
+ * interface will not have any of their state serialized or
+ * deserialized.  All subtypes of a serializable class are themselves
+ * serializable.  The serialization interface has no methods or fields
+ * and serves only to identify the semantics of being serializable. &lt;p>
+ * 通过继承Serializable接口可实现类的可序列化。不实现此接口的类不会有序列化
+ * 或反序列化的状态。Serializable的所有子类型都是可序列化的。序列化接口没有
+ * 方法或字段，仅用于识别可序列化的语义
+ * To allow subtypes of non-serializable classes to be serialized, the
+ * subtype may assume responsibility for saving and restoring the
+ * state of the supertype's public, protected, and (if accessible)
+ * package fields.  The subtype may assume this responsibility only if
+ * the class it extends has an accessible no-arg constructor to
+ * initialize the class's state.  It is an error to declare a class
+ * Serializable if this is not the case.  The error will be detected at
+ * runtime. &lt;p>
+ * 为了使非序列化类的子类被序列化，子类型可以负责保存（序列化）和恢复（反序列化）
+ * 父类的公共、保护和（如果可以访问）包字段的状态。子类型只有在其扩展的类具有
+ * 可访问的无参构造函数来初始化类的状态时才可以承担此责任。如果没有实例声明类的
+ * 序列化是一个错误。在运行时这个错误会被探测到。
+ *     有的时候，往往我们不能够让父类实现Serializable接口，原因是有时候父类是抽象的，
+ *     并且父类不能够强制每个子类都拥有序列化的能力。也就是说，要为一个没有实现
+ *     Serializable接口的父类，编写一个能够序列化的子类要做两件事情：
+ *     父类要有一个无参的constructor ②子类要负责序列化（反序列化）父类的域。 
+ * During deserialization, the fields of non-serializable classes will
+ * be initialized using the public or protected no-arg constructor of
+ * the class.  A no-arg constructor must be accessible to the subclass
+ * that is serializable.  The fields of serializable subclasses will
+ * be restored from the stream. &lt;p>
+ * 在反序列化期间，非序列化类的字段将使用类的公共或受保护的无参数构造函数初始化。
+ * 必须对可序列化的子类访问无参数的构造函数。可序列化子类的字段将从流中恢复。
+ * When traversing a graph, an object may be encountered that does not
+ * support the Serializable interface. In this case the
+ * NotSerializableException will be thrown and will identify the class
+ * of the non-serializable object. &lt;p>
+ * 当遍历图形时，可能会遇到不支持Serializable接口的对象。
+ * 此时将会抛出NotSerializableException异常，并标识为非serializable对象的类。
+ * Classes that require special handling during the serialization and
+ * deserialization process must implement special methods with these exact
+ * signatures:
+ * 在序列化和反序列化过程中需要特殊处理的类必须实现以下具有这些精确签名的特殊方法:
+ * &lt;PRE>
+ * private void writeObject(java.io.ObjectOutputStream out)
+ *     throws IOException
+ * private void readObject(java.io.ObjectInputStream in)
+ *     throws IOException, ClassNotFoundException;
+ * private void readObjectNoData()
+ *     throws ObjectStreamException;
+ * &lt;/PRE>
+ *
+ * &lt;p>The writeObject method is responsible for writing the state of the
+ * object for its particular class so that the corresponding
+ * readObject method can restore it.  The default mechanism for saving
+ * the Object's fields can be invoked by calling
+ * out.defaultWriteObject. The method does not need to concern
+ * itself with the state belonging to its superclasses or subclasses.
+ * State is saved by writing the individual fields to the
+ * ObjectOutputStream using the writeObject method or by using the
+ * methods for primitive data types supported by DataOutput.
+ * writeObject方法负责为它的特定类写入对象的状态，以便相应的readObject方法可以恢复它。
+ * 通过调用out.defaultWriteObject可以调用保存对象字段的默认机制。这个方法不需要关心它
+ * 自己是属于父类还是子类。通过使用writeObject方法或使用DataOutput支持的原始数据类型的
+ * 方法，将单个字段写入ObjectOutputStream，从而保存状态。
+ * &lt;p>The readObject method is responsible for reading from the stream and
+ * restoring the classes fields. It may call in.defaultReadObject to invoke
+ * the default mechanism for restoring the object's non-static and
+ * non-transient fields.  The defaultReadObject method uses information in
+ * the stream to assign the fields of the object saved in the stream with the
+ * correspondingly named fields in the current object.  This handles the case
+ * when the class has evolved to add new fields. The method does not need to
+ * concern itself with the state belonging to its superclasses or subclasses.
+ * State is saved by writing the individual fields to the
+ * ObjectOutputStream using the writeObject method or by using the
+ * methods for primitive data types supported by DataOutput.
+ * readObject方法负责从流中读取并恢复类字段。
+ * &lt;p>The readObjectNoData method is responsible for initializing the state of
+ * the object for its particular class in the event that the serialization
+ * stream does not list the given class as a superclass of the object being
+ * deserialized.  This may occur in cases where the receiving party uses a
+ * different version of the deserialized instance's class than the sending
+ * party, and the receiver's version extends classes that are not extended by
+ * the sender's version.  This may also occur if the serialization stream has
+ * been tampered; hence, readObjectNoData is useful for initializing
+ * deserialized objects properly despite a "hostile" or incomplete source
+ * stream.
+ * readObjectNoData方法负责初始化状态。
+ * &lt;p>Serializable classes that need to designate an alternative object to be
+ * used when writing an object to the stream should implement this
+ * special method with the exact signature:
+ *
+ * &lt;PRE>
+ * ANY-ACCESS-MODIFIER Object writeReplace() throws ObjectStreamException;
+ * &lt;/PRE>&lt;p>
+ *
+ * This writeReplace method is invoked by serialization if the method
+ * exists and it would be accessible from a method defined within the
+ * class of the object being serialized. Thus, the method can have private,
+ * protected and package-private access. Subclass access to this method
+ * follows java accessibility rules. &lt;p>
+ *
+ * Classes that need to designate a replacement when an instance of it
+ * is read from the stream should implement this special method with the
+ * exact signature.
+ *
+ * &lt;PRE>
+ * ANY-ACCESS-MODIFIER Object readResolve() throws ObjectStreamException;
+ * &lt;/PRE>&lt;p>
+ *
+ * This readResolve method follows the same invocation rules and
+ * accessibility rules as writeReplace.&lt;p>
+ *
+ * The serialization runtime associates with each serializable class a version
+ * number, called a serialVersionUID, which is used during deserialization to
+ * verify that the sender and receiver of a serialized object have loaded
+ * classes for that object that are compatible with respect to serialization.
+ * If the receiver has loaded a class for the object that has a different
+ * serialVersionUID than that of the corresponding sender's class, then
+ * deserialization will result in an &#123;@link InvalidClassException&#125;.  A
+ * serializable class can declare its own serialVersionUID explicitly by
+ * declaring a field named &lt;code>"serialVersionUID"&lt;/code> that must be static,
+ * final, and of type &lt;code>long&lt;/code>:
+ *
+ * &lt;PRE>
+ * ANY-ACCESS-MODIFIER static final long serialVersionUID = 42L;
+ * &lt;/PRE>
+ *
+ * If a serializable class does not explicitly declare a serialVersionUID, then
+ * the serialization runtime will calculate a default serialVersionUID value
+ * for that class based on various aspects of the class, as described in the
+ * Java(TM) Object Serialization Specification.  However, it is &lt;em>strongly
+ * recommended&lt;/em> that all serializable classes explicitly declare
+ * serialVersionUID values, since the default serialVersionUID computation is
+ * highly sensitive to class details that may vary depending on compiler
+ * implementations, and can thus result in unexpected
+ * &lt;code>InvalidClassException&lt;/code>s during deserialization.  Therefore, to
+ * guarantee a consistent serialVersionUID value across different java compiler
+ * implementations, a serializable class must declare an explicit
+ * serialVersionUID value.  It is also strongly advised that explicit
+ * serialVersionUID declarations use the &lt;code>private&lt;/code> modifier where
+ * possible, since such declarations apply only to the immediately declaring
+ * class--serialVersionUID fields are not useful as inherited members. Array
+ * classes cannot declare an explicit serialVersionUID, so they always have
+ * the default computed value, but the requirement for matching
+ * serialVersionUID values is waived for array classes.
+ * @since   JDK1.1
+ */</span>
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">Serializable</span> <span class="token punctuation">&#123;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -269,7 +436,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://wangjikai.com/2023/03/27/Java-Serializable%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">https://wangjikai.com/2023/03/27/Java-Serializable%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</a>
+                    <a href="https://wangjikai.com/2018/06/02/Java-Serializable%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">https://wangjikai.com/2018/06/02/Java-Serializable%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -387,7 +554,7 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/03/27/Java-ArrayList%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+                <a href="/2018/06/02/Java-ArrayList%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
                     <div class="card-image">
                         
                         
@@ -399,12 +566,14 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            版本说明：
+JDK版本：1.8.0_171IDE版本：IntelliJ IDEA 2017.1.5
+
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-03-27
+                            <i class="far fa-clock fa-fw icon-date"></i>2018-06-02
                         </span>
                         <span class="publish-author">
                             
@@ -424,7 +593,7 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2023/03/27/Java-RandomAccess%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+                <a href="/2018/06/02/Java-RandomAccess%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
                     <div class="card-image">
                         
                         
@@ -437,11 +606,12 @@
                     <div class="summary block-with-text">
                         
                             
+标记接口，Marker interface，它们是一类没有定义任何接口方法的接口，表现为一个空接口没有接口方法意味着实现该接口的类无需实现任何接口方法，仅仅作为一种标记，以供其他方法判断作用就是当某个类实现这个接口后即拥有了这个接口的功能
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-03-27
+                                <i class="far fa-clock fa-fw icon-date"></i>2018-06-02
                             </span>
                         <span class="publish-author">
                             
